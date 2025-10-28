@@ -483,7 +483,7 @@
                   ${cls.color ? `<div class="color-tint" style="background-color: ${cls.color}40;"></div>` : ''}
                 </div>
               </div>
-              <div class="edit-icon" onclick="openClassEditor('${cls.id}')">
+              <div class="edit-icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -491,6 +491,18 @@
               </div>
             </div>
           `).join('');
+
+          // Add event listeners to the edit icons
+          const editIcons = container.querySelectorAll('.edit-icon');
+          editIcons.forEach(icon => {
+            const card = icon.closest('.course-card');
+            if (card) {
+              const classId = card.getAttribute('data-class-id');
+              if (classId) {
+                icon.addEventListener('click', () => openClassEditor(classId));
+              }
+            }
+          });
         }
 
         function openClassEditor(classId = null) {

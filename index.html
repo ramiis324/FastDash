@@ -174,10 +174,11 @@
             <div class="flex h-full min-h-[700px] flex-col justify-between p-4" style="background-color: var(--bg-primary);">
               <div class="flex flex-col gap-4">
                 <div class="flex gap-3">
-                  <div
-                    class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-                    style='background-image: url("https://d2u1z1lopyfwlx.cloudfront.net/thumbnails/53fe7106-1df4-5b1a-b5b6-9e3652ba9839/5b008e08-0f99-56c5-89bf-3e139834bbd7.jpg");'
-                  ></div>
+                  <div id="userIconContainer" class="size-10 rounded-full flex items-center justify-center">
+                    <svg id="userIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/>
+                    </svg>
+                  </div>
                   <div>
                   <h1 class="text-base font-medium leading-normal" style="color: var(--text-primary);">User</h1>
                   <p class="text-base leading-normal" style="color: var(--text-secondary); font-size: 13px;">User</p>
@@ -398,6 +399,7 @@
                 
                 // Load user-specific settings
                 loadUserSettings();
+                updateUserIcon();
             }
         }
 
@@ -409,21 +411,44 @@
             }
         }
 
-        function saveUserSettings(theme, customColor) {
+        function saveUserSettings(theme, customColor, userIconColor) {
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
             if (currentUser) {
                 currentUser.settings = {
                     theme: theme,
-                    customColor: customColor
+                    customColor: customColor,
+                    userIconColor: userIconColor
                 };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
             }
         }
 
+        function updateUserIcon() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            const userIconContainer = document.getElementById('userIconContainer');
+            if (!userIconContainer) return;
+
+            let iconColor = '#4b7cff'; // Default color
+
+            if (currentUser && currentUser.settings && currentUser.settings.userIconColor) {
+                iconColor = currentUser.settings.userIconColor;
+            } else if (currentUser) {
+                // If no color is set, generate a random one and save it
+                iconColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+                saveUserSettings(
+                    currentUser.settings?.theme || 'dark',
+                    currentUser.settings?.customColor || '#111118',
+                    iconColor
+                );
+            }
+
+            userIconContainer.style.backgroundColor = iconColor;
+        }
+
         function logout() {
           localStorage.removeItem('currentUser');
           localStorage.removeItem('isLoggedIn');
-          window.location.href = 'login.html';
+          window.location.reload();
         }
 
         // --- Class Management System ---
@@ -934,7 +959,7 @@
           
           // Get user settings instead of global settings
           const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-          const userSettings = currentUser?.settings || { theme: 'dark', customColor: '#111118' };
+          const userSettings = currentUser?.settings || { theme: 'dark', customColor: '#111118', userIconColor: '#4b7cff' };
           
           // Set radio button
           const themeRadios = modal.querySelectorAll('input[name="theme"]');
@@ -950,6 +975,15 @@
           if (customColorInput && customColorText) {
             customColorInput.value = userSettings.customColor;
             customColorText.value = userSettings.customColor;
+          }
+
+          // Set user icon color inputs
+          const userIconColorInput = modal.querySelector('#userIconColorInput');
+          const userIconColorText = modal.querySelector('#userIconColorText');
+
+          if (userIconColorInput && userIconColorText) {
+              userIconColorInput.value = userSettings.userIconColor;
+              userIconColorText.value = userSettings.userIconColor;
           }
           
           // Show/hide custom color section
@@ -972,11 +1006,14 @@
           const selectedTheme = modal.querySelector('input[name="theme"]:checked').value;
           const customColorInput = modal.querySelector('#customColorInput');
           const customColor = customColorInput ? customColorInput.value : '#111118';
+          const userIconColorInput = modal.querySelector('#userIconColorInput');
+          const userIconColor = userIconColorInput ? userIconColorInput.value : '#4b7cff';
           
           // Save to user settings instead of global localStorage
-          saveUserSettings(selectedTheme, customColor);
+          saveUserSettings(selectedTheme, customColor, userIconColor);
           
           applyTheme(selectedTheme, customColor);
+          updateUserIcon();
           closeSettingsModal();
         }
 
@@ -1000,6 +1037,14 @@
             if (colorInput && /^#[0-9A-F]{6}$/i.test(e.target.value)) {
               colorInput.value = e.target.value;
             }
+          } else if (e.target.id === 'userIconColorInput') {
+            const textInput = document.getElementById('userIconColorText');
+            if (textInput) textInput.value = e.target.value;
+          } else if (e.target.id === 'userIconColorText') {
+            const colorInput = document.getElementById('userIconColorInput');
+            if (colorInput && /^#[0-9A-F]{6}$/i.test(e.target.value)) {
+              colorInput.value = e.target.value;
+            }
           }
         });
 
@@ -1009,8 +1054,32 @@
           if (t.matches('#settingsCancel')) closeSettingsModal();
           if (t.matches('#settingsSave')) saveSettings();
           if (t.matches('#logoutBtn')) logout();
+          if (t.matches('#changeDisplayNameBtn')) changeDisplayName();
+          if (t.matches('#deleteAccountBtn')) deleteAccount();
           if (t.matches('#settingsModal') && e.target.id === 'settingsModal') closeSettingsModal();
         });
+
+        function changeDisplayName() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            if (!currentUser) return;
+
+            const newName = prompt('Enter your new display name:', currentUser.name);
+            if (newName && newName.trim() !== '') {
+                currentUser.name = newName.trim();
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateUserInterface();
+            }
+        }
+
+        function deleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This will remove all your classes and settings.')) {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                if (currentUser) {
+                    localStorage.removeItem(`userClasses_${currentUser.id}`);
+                }
+                logout();
+            }
+        }
 
         // attach course module button listeners so clicking modules records history
         if (mainContent) {
@@ -1084,8 +1153,9 @@
       <div class="rounded-lg p-6 w-[400px]" style="background-color: var(--bg-primary);">
         <h3 class="text-lg mb-4" style="color: var(--text-primary);">Settings</h3>
         
-        <!-- Theme Selection -->
+        <!-- Interface Section -->
         <div class="mb-6">
+          <h4 class="text-md mb-3 font-semibold" style="color: var(--text-primary);">Interface</h4>
           <label class="text-sm mb-3 block" style="color: var(--text-secondary);">Theme</label>
           <div class="space-y-2">
             <label class="flex items-center gap-3 cursor-pointer">
@@ -1110,6 +1180,23 @@
             <input id="customColorInput" type="color" class="w-12 h-8 p-0 border-0 rounded" value="#111118">
             <input id="customColorText" type="text" class="text-sm border rounded px-2 py-1 flex-1" style="background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--bg-hover);" placeholder="#111118" value="#111118">
           </div>
+        </div>
+
+        <div class="mb-6">
+            <label class="text-sm mb-2 block" style="color: var(--text-secondary);">User Icon Color</label>
+            <div class="flex items-center gap-3">
+                <input id="userIconColorInput" type="color" class="w-12 h-8 p-0 border-0 rounded" value="#4b7cff">
+                <input id="userIconColorText" type="text" class="text-sm border rounded px-2 py-1 flex-1" style="background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--bg-hover);" placeholder="#4b7cff" value="#4b7cff">
+            </div>
+        </div>
+
+        <!-- Account Section -->
+        <div class="mb-6">
+            <h4 class="text-md mb-3 font-semibold" style="color: var(--text-primary);">Account</h4>
+            <div class="space-y-2">
+                <button id="changeDisplayNameBtn" class="w-full px-4 py-2 rounded text-sm" style="background-color: var(--bg-secondary); color: var(--text-primary);">Change Display Name</button>
+                <button id="deleteAccountBtn" class="w-full px-4 py-2 rounded text-sm" style="background-color: #ff6b6b; color: white;">Delete Account</button>
+            </div>
         </div>
 
         <div class="flex justify-end gap-2">

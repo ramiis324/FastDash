@@ -420,6 +420,15 @@
                     userIconColor: userIconColor
                 };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                if (currentUser.id === 'demo') return;
+
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                if (userIndex > -1) {
+                    users[userIndex] = currentUser;
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
             }
         }
 
@@ -858,8 +867,12 @@
         }
         
         function loadSavedTheme() {
-          const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
-          const savedCustomColor = localStorage.getItem(CUSTOM_COLOR_KEY) || '#111118';
+          const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+          const settings = currentUser?.settings;
+
+          const savedTheme = settings?.theme || 'dark';
+          const savedCustomColor = settings?.customColor || '#111118';
+
           applyTheme(savedTheme, savedCustomColor);
           return { theme: savedTheme, customColor: savedCustomColor };
         }

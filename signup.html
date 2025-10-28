@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+    />
+
+    <title>Sign Up - FastDash</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+      /* theme support */
+      :root {
+        --bg-primary: #111118;
+        --bg-secondary: #292938;
+        --bg-hover: #2f2f3a;
+        --text-primary: #ffffff;
+        --text-secondary: #9d9db8;
+        --accent: #4b7cff;
+      }
+      
+      .theme-light {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f5f5f5;
+        --bg-hover: #e5e5e5;
+        --text-primary: #000000;
+        --text-secondary: #666666;
+        --accent: #4b7cff;
+      }
+      
+      .theme-custom {
+        --bg-primary: var(--custom-bg-primary);
+        --bg-secondary: var(--custom-bg-secondary);
+        --bg-hover: var(--custom-bg-hover);
+        --text-primary: var(--custom-text-primary);
+        --text-secondary: var(--custom-text-secondary);
+        --accent: var(--custom-accent);
+      }
+      
+      body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: Inter, "Noto Sans", sans-serif;
+      }
+      
+      .form-input {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--bg-hover);
+      }
+      
+      .form-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(75, 124, 255, 0.2);
+      }
+      
+      .form-input::placeholder {
+        color: var(--text-secondary);
+      }
+      
+      .btn-primary {
+        background-color: var(--accent);
+        color: white;
+        transition: all 0.2s ease;
+      }
+      
+      .btn-primary:hover {
+        background-color: #5a8cff;
+        transform: translateY(-1px);
+      }
+      
+      .btn-secondary {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--bg-hover);
+        transition: all 0.2s ease;
+      }
+      
+      .btn-secondary:hover {
+        background-color: var(--bg-hover);
+        transform: translateY(-1px);
+      }
+      
+      .error-message {
+        color: #ff6b6b;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+      
+      .success-message {
+        color: #51cf66;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md p-8">
+        <!-- Logo/Title -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-2" style="color: var(--text-primary);">FastDash</h1>
+            <p class="text-sm" style="color: var(--text-secondary);">Student Dashboard</p>
+        </div>
+
+        <!-- Signup Form -->
+        <div class="rounded-lg p-6" style="background-color: var(--bg-secondary);">
+            <h2 class="text-xl font-semibold mb-6 text-center" style="color: var(--text-primary);">Create Account</h2>
+            
+            <form id="signupForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="fullName" 
+                        required 
+                        class="form-input w-full px-3 py-2 rounded-lg"
+                        placeholder="Enter your full name"
+                    />
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        required 
+                        class="form-input w-full px-3 py-2 rounded-lg"
+                        placeholder="Enter your email"
+                    />
+                    <div id="emailError" class="error-message hidden"></div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        required 
+                        class="form-input w-full px-3 py-2 rounded-lg"
+                        placeholder="Create a password"
+                    />
+                    <div id="passwordError" class="error-message hidden"></div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Confirm Password</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        required 
+                        class="form-input w-full px-3 py-2 rounded-lg"
+                        placeholder="Confirm your password"
+                    />
+                    <div id="confirmPasswordError" class="error-message hidden"></div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Grade Level</label>
+                    <select id="gradeLevel" required class="form-input w-full px-3 py-2 rounded-lg">
+                        <option value="">Select your grade</option>
+                        <option value="6">6th Grade</option>
+                        <option value="7">7th Grade</option>
+                        <option value="8">8th Grade</option>
+                        <option value="9">9th Grade</option>
+                        <option value="10">10th Grade</option>
+                        <option value="11">11th Grade</option>
+                        <option value="12">12th Grade</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center">
+                    <input type="checkbox" id="terms" required class="mr-2" style="accent-color: var(--accent);">
+                    <label for="terms" class="text-sm" style="color: var(--text-secondary);">
+                        I agree to the <a href="#" class="font-medium" style="color: var(--accent);">Terms of Service</a> and <a href="#" class="font-medium" style="color: var(--accent);">Privacy Policy</a>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn-primary w-full py-2 rounded-lg font-medium">
+                    Create Account
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm" style="color: var(--text-secondary);">
+                    Already have an account? 
+                    <a href="login.html" class="font-medium" style="color: var(--accent);">Sign in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('dashboardTheme') || 'dark';
+            const savedCustomColor = localStorage.getItem('dashboardCustomColor') || '#111118';
+            
+            document.body.className = document.body.className.replace(/theme-\w+/g, '');
+            document.body.classList.add(`theme-${savedTheme}`);
+            
+            if (savedTheme === 'custom' && savedCustomColor) {
+                const colors = generateColorPalette(savedCustomColor);
+                document.documentElement.style.setProperty('--custom-bg-primary', colors.bgPrimary);
+                document.documentElement.style.setProperty('--custom-bg-secondary', colors.bgSecondary);
+                document.documentElement.style.setProperty('--custom-bg-hover', colors.bgHover);
+                document.documentElement.style.setProperty('--custom-text-primary', colors.textPrimary);
+                document.documentElement.style.setProperty('--custom-text-secondary', colors.textSecondary);
+                document.documentElement.style.setProperty('--custom-accent', colors.accent);
+            }
+        }
+        
+        function generateColorPalette(baseColor) {
+            const hex = baseColor.replace('#', '');
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            
+            const lighten = (color, amount) => Math.min(255, color + amount);
+            const darken = (color, amount) => Math.max(0, color - amount);
+            
+            return {
+                bgPrimary: `rgb(${darken(r, 20)}, ${darken(g, 20)}, ${darken(b, 20)})`,
+                bgSecondary: `rgb(${r}, ${g}, ${b})`,
+                bgHover: `rgb(${lighten(r, 20)}, ${lighten(g, 20)}, ${lighten(b, 20)})`,
+                textPrimary: r + g + b > 384 ? '#000000' : '#ffffff',
+                textSecondary: r + g + b > 384 ? '#666666' : '#9d9db8',
+                accent: '#4b7cff'
+            };
+        }
+
+        // Validation functions
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function validatePassword(password) {
+            return password.length >= 6;
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+        }
+
+        function hideError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.classList.add('hidden');
+        }
+
+        // Check if email already exists
+        function emailExists(email) {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            return users.some(user => user.email === email);
+        }
+
+        // Handle signup form submission
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const gradeLevel = document.getElementById('gradeLevel').value;
+            
+            // Clear previous errors
+            hideError('emailError');
+            hideError('passwordError');
+            hideError('confirmPasswordError');
+            
+            let hasErrors = false;
+            
+            // Validate email
+            if (!validateEmail(email)) {
+                showError('emailError', 'Please enter a valid email address');
+                hasErrors = true;
+            } else if (emailExists(email)) {
+                showError('emailError', 'An account with this email already exists');
+                hasErrors = true;
+            }
+            
+            // Validate password
+            if (!validatePassword(password)) {
+                showError('passwordError', 'Password must be at least 6 characters long');
+                hasErrors = true;
+            }
+            
+            // Validate password confirmation
+            if (password !== confirmPassword) {
+                showError('confirmPasswordError', 'Passwords do not match');
+                hasErrors = true;
+            }
+            
+            if (hasErrors) {
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: Date.now().toString(),
+                name: fullName,
+                email: email,
+                password: password,
+                gradeLevel: gradeLevel,
+                createdAt: new Date().toISOString(),
+                settings: {
+                    theme: 'dark',
+                    customColor: '#111118'
+                }
+            };
+            
+            // Save user to localStorage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Auto-login the new user
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            // Show success message and redirect
+            alert('Account created successfully! Welcome to FastDash!');
+            window.location.href = 'index.html';
+        });
+
+        // Check if already logged in
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            window.location.href = 'index.html';
+        }
+
+        // Load theme on page load
+        loadTheme();
+    </script>
+</body>
+</html>

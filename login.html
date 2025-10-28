@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+    />
+
+    <title>Login - FastDash</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+      /* theme support */
+      :root {
+        --bg-primary: #111118;
+        --bg-secondary: #292938;
+        --bg-hover: #2f2f3a;
+        --text-primary: #ffffff;
+        --text-secondary: #9d9db8;
+        --accent: #4b7cff;
+      }
+      
+      .theme-light {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f5f5f5;
+        --bg-hover: #e5e5e5;
+        --text-primary: #000000;
+        --text-secondary: #666666;
+        --accent: #4b7cff;
+      }
+      
+      .theme-custom {
+        --bg-primary: var(--custom-bg-primary);
+        --bg-secondary: var(--custom-bg-secondary);
+        --bg-hover: var(--custom-bg-hover);
+        --text-primary: var(--custom-text-primary);
+        --text-secondary: var(--custom-text-secondary);
+        --accent: var(--custom-accent);
+      }
+      
+      body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: Inter, "Noto Sans", sans-serif;
+      }
+      
+      .form-input {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--bg-hover);
+      }
+      
+      .form-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(75, 124, 255, 0.2);
+      }
+      
+      .form-input::placeholder {
+        color: var(--text-secondary);
+      }
+      
+      .btn-primary {
+        background-color: var(--accent);
+        color: white;
+        transition: all 0.2s ease;
+      }
+      
+      .btn-primary:hover {
+        background-color: #5a8cff;
+        transform: translateY(-1px);
+      }
+      
+      .btn-secondary {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--bg-hover);
+        transition: all 0.2s ease;
+      }
+      
+      .btn-secondary:hover {
+        background-color: var(--bg-hover);
+        transform: translateY(-1px);
+      }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md p-8">
+        <!-- Logo/Title -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-2" style="color: var(--text-primary);">FastDash</h1>
+            <p class="text-sm" style="color: var(--text-secondary);">Student Dashboard</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="rounded-lg p-6" style="background-color: var(--bg-secondary);">
+            <h2 class="text-xl font-semibold mb-6 text-center" style="color: var(--text-primary);">Sign In</h2>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        required 
+                        class="form-input w-full px-3 py-2 rounded-lg"
+                        placeholder="Enter your email"
+                    />
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        required 
+                        class="form-input w-full px-3 py-2 rounded-lg"
+                        placeholder="Enter your password"
+                    />
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="mr-2" style="accent-color: var(--accent);">
+                        <span class="text-sm" style="color: var(--text-secondary);">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm" style="color: var(--accent);">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="btn-primary w-full py-2 rounded-lg font-medium">
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm" style="color: var(--text-secondary);">
+                    Don't have an account? 
+                    <a href="signup.html" class="font-medium" style="color: var(--accent);">Sign up</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Demo Account Info -->
+        <div class="mt-6 p-4 rounded-lg" style="background-color: var(--bg-secondary);">
+            <h3 class="text-sm font-medium mb-2" style="color: var(--text-primary);">Demo Account</h3>
+            <p class="text-xs mb-2" style="color: var(--text-secondary);">Try the demo to see the dashboard:</p>
+            <div class="text-xs" style="color: var(--text-secondary);">
+                <p><strong>Email:</strong> demo@student.com</p>
+                <p><strong>Password:</strong> demo123</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('dashboardTheme') || 'dark';
+            const savedCustomColor = localStorage.getItem('dashboardCustomColor') || '#111118';
+            
+            document.body.className = document.body.className.replace(/theme-\w+/g, '');
+            document.body.classList.add(`theme-${savedTheme}`);
+            
+            if (savedTheme === 'custom' && savedCustomColor) {
+                const colors = generateColorPalette(savedCustomColor);
+                document.documentElement.style.setProperty('--custom-bg-primary', colors.bgPrimary);
+                document.documentElement.style.setProperty('--custom-bg-secondary', colors.bgSecondary);
+                document.documentElement.style.setProperty('--custom-bg-hover', colors.bgHover);
+                document.documentElement.style.setProperty('--custom-text-primary', colors.textPrimary);
+                document.documentElement.style.setProperty('--custom-text-secondary', colors.textSecondary);
+                document.documentElement.style.setProperty('--custom-accent', colors.accent);
+            }
+        }
+        
+        function generateColorPalette(baseColor) {
+            const hex = baseColor.replace('#', '');
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            
+            const lighten = (color, amount) => Math.min(255, color + amount);
+            const darken = (color, amount) => Math.max(0, color - amount);
+            
+            return {
+                bgPrimary: `rgb(${darken(r, 20)}, ${darken(g, 20)}, ${darken(b, 20)})`,
+                bgSecondary: `rgb(${r}, ${g}, ${b})`,
+                bgHover: `rgb(${lighten(r, 20)}, ${lighten(g, 20)}, ${lighten(b, 20)})`,
+                textPrimary: r + g + b > 384 ? '#000000' : '#ffffff',
+                textSecondary: r + g + b > 384 ? '#666666' : '#9d9db8',
+                accent: '#4b7cff'
+            };
+        }
+
+        // Simple authentication system
+        function authenticateUser(email, password) {
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Check for demo account
+            if (email === 'demo@student.com' && password === 'demo123') {
+                return {
+                    id: 'demo',
+                    email: 'demo@student.com',
+                    name: 'Demo Student',
+                    isDemo: true
+                };
+            }
+            
+            // Check registered users
+            const user = users.find(u => u.email === email && u.password === password);
+            return user ? { ...user, isDemo: false } : null;
+        }
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const user = authenticateUser(email, password);
+            
+            if (user) {
+                // Save user session
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                localStorage.setItem('isLoggedIn', 'true');
+                
+                // Redirect to dashboard
+                window.location.href = 'index.html';
+            } else {
+                alert('Invalid email or password. Please try again.');
+            }
+        });
+
+        // Check if already logged in
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            window.location.href = 'index.html';
+        }
+
+        // Load theme on page load
+        loadTheme();
+    </script>
+</body>
+</html>

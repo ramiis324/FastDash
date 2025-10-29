@@ -236,7 +236,7 @@
                     </div>
                     <p class="text-sm font-medium leading-normal" style="color: var(--text-primary);">Inbox</p>
                   </a>
-                  <div class="flex items-center gap-3 px-3 py-2 hoverable cursor-pointer">
+                  <div class="flex items-center gap-3 px-3 py-2 hoverable cursor-pointer" data-action="help">
                     <div style="color: var(--text-primary);" data-icon="Question" data-size="24px" data-weight="regular">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
                         <path
@@ -894,16 +894,21 @@
           // find course titles in main content
           const nodes = Array.from(mainContent.querySelectorAll('p.course-title'));
           const titles = nodes.map(n => n.textContent.trim()).filter(Boolean);
-          if (titles.length === 0) {
-            sidebarContent.innerHTML = '<div class="px-3 text-sm" style="color: var(--text-secondary);">No courses found</div>';
-            return;
-          }
-          sidebarContent.innerHTML = `
+
+          let content = `
             <div class="flex items-center justify-between px-2 pb-2">
               <div class="text-sm" style="color: var(--text-secondary);">Your courses</div>
-              <button class="px-2" style="color: var(--text-primary);" data-back>✕</button>
+              <button class="px-2" style="color: var(--text-primary);" data-back>Leave</button>
             </div>
-          ` + titles.map(t => `<button class="w-full text-left px-3 py-2 hoverable" style="color: var(--text-primary);" data-course="${encodeURIComponent(t)}">${t}</button>`).join('');
+          `;
+
+          if (titles.length === 0) {
+            content += '<div class="px-3 text-sm" style="color: var(--text-secondary);">No courses found</div>';
+          } else {
+            content += titles.map(t => `<button class="w-full text-left px-3 py-2 hoverable" style="color: var(--text-primary);" data-course="${encodeURIComponent(t)}">${t}</button>`).join('');
+          }
+
+          sidebarContent.innerHTML = content;
         }
 
         function renderHistoryList() {
@@ -921,7 +926,55 @@
           ` + list.map(t => `<button class="w-full text-left px-3 py-2 hoverable" style="color: var(--text-primary);" data-course="${encodeURIComponent(t)}">${t}</button>`).join('');
         }
 
+        function renderHelpSection() {
+          if (!sidebarContent) return;
+
+          const helpContent = [
+            { q: 'How do I add a new class?', a: 'Click the "+ Add New Class" button on the dashboard to open the class editor.' },
+            { q: 'How do I edit or delete a class?', a: 'Hover over a class card and click the pencil icon that appears in the top-right corner.' },
+            { q: 'How does the schedule highlighting work?', a: 'The app automatically highlights the current class based on a pre-defined schedule. This requires classes to have a numeric tag (1-7) corresponding to the period.' },
+            { q: 'How do I customize the theme?', a: 'Click the "Settings" button in the sidebar to open the settings modal, where you can change the theme and colors.' },
+            { q: 'How do I change my name or icon color?', a: 'You can change your display name and icon color in the "Settings" modal.' },
+            { q: 'How do I search for a class?', a: 'Use the search bar at the top of the main content area to filter your classes by name, description, or tags.' }
+          ];
+
+          let content = `
+            <div class="flex items-center justify-between px-2 pb-2">
+              <div class="text-sm" style="color: var(--text-secondary);">Help Center</div>
+              <button class="px-2" style="color: var(--text-primary);" data-back>Leave</button>
+            </div>
+            <div class="px-1 pb-2">
+              <input type="text" id="helpSearch" placeholder="Search help..." class="w-full px-3 py-2 rounded-lg text-sm" style="background-color: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--bg-hover);">
+            </div>
+            <div id="helpContent" class="flex flex-col gap-2 px-1 overflow-y-auto" style="max-height: calc(100vh - 200px);">
+              ${helpContent.map(item => `
+                <div class="help-item p-2 rounded-lg" style="background-color: var(--bg-secondary);">
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">${item.q}</p>
+                  <p class="text-xs pt-1" style="color: var(--text-secondary);">${item.a}</p>
+                </div>
+              `).join('')}
+            </div>
+          `;
+
+          sidebarContent.innerHTML = content;
+        }
+
         // delegate clicks inside sidebarContent (use delegation so handlers survive DOM replacements)
+        sidebarContent && sidebarContent.addEventListener('input', function(e) {
+          if (e.target.id === 'helpSearch') {
+            const searchTerm = e.target.value.toLowerCase();
+            const helpItems = document.querySelectorAll('#helpContent .help-item');
+            helpItems.forEach(item => {
+              const text = item.textContent.toLowerCase();
+              if (text.includes(searchTerm)) {
+                item.style.display = 'block';
+              } else {
+                item.style.display = 'none';
+              }
+            });
+          }
+        });
+
         sidebarContent && sidebarContent.addEventListener('click', function (e) {
           // back button (X)
           const back = e.target.closest('[data-back]');
@@ -933,6 +986,7 @@
             const action = btn.getAttribute('data-action');
             if (action === 'courses') renderCoursesList();
             else if (action === 'history') renderHistoryList();
+            else if (action === 'help') renderHelpSection();
             else if (action === 'dashboard') renderDefaultSidebar();
             return;
           }

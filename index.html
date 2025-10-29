@@ -957,24 +957,26 @@
           `;
 
           sidebarContent.innerHTML = content;
+
+          // Add search functionality
+          const helpSearchInput = document.getElementById('helpSearch');
+          if (helpSearchInput) {
+            helpSearchInput.addEventListener('input', function(e) {
+              const searchTerm = e.target.value.toLowerCase();
+              const helpItems = document.querySelectorAll('#helpContent .help-item');
+              helpItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                  item.style.display = 'block';
+                } else {
+                  item.style.display = 'none';
+                }
+              });
+            });
+          }
         }
 
         // delegate clicks inside sidebarContent (use delegation so handlers survive DOM replacements)
-        sidebarContent && sidebarContent.addEventListener('input', function(e) {
-          if (e.target.id === 'helpSearch') {
-            const searchTerm = e.target.value.toLowerCase();
-            const helpItems = document.querySelectorAll('#helpContent .help-item');
-            helpItems.forEach(item => {
-              const text = item.textContent.toLowerCase();
-              if (text.includes(searchTerm)) {
-                item.style.display = 'block';
-              } else {
-                item.style.display = 'none';
-              }
-            });
-          }
-        });
-
         sidebarContent && sidebarContent.addEventListener('click', function (e) {
           // back button (X)
           const back = e.target.closest('[data-back]');
